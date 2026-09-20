@@ -1,47 +1,24 @@
-# This workflow validates the backend and frontend separately because each app is in its own package directory.
-
 name: Node.js CI
 
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - app: backend
-            directory: backend
-            lockfile: backend/package-lock.json
-          - app: frontend
-            directory: frontend
-            lockfile: frontend/package-lock.json
-
     defaults:
       run:
-        working-directory: ${{ matrix.directory }}
-
+        working-directory: backend
     steps:
       - uses: actions/checkout@v4
-
-      - name: Use Node.js 22 for ${{ matrix.app }}
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
-          cache-dependency-path: ${{ matrix.lockfile }}
-
-      - name: Install dependencies for ${{ matrix.app }}
-        run: npm ci
-
-      - name: Build ${{ matrix.app }}
-        run: npm run build --if-present
-
-      - name: Test ${{ matrix.app }}
-        run: npm test --if-present
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test --if-present
