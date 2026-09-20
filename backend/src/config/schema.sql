@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   description VARCHAR(255) NOT NULL,
   amount DECIMAL(10, 2) NOT NULL,
   transaction_date DATE NOT NULL,
+  type VARCHAR(20) NOT NULL DEFAULT 'expense',
   created_at TIMESTAMP DEFAULT NOW()
 );
 
