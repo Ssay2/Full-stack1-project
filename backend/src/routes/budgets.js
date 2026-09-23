@@ -1,12 +1,7 @@
-const express = require('express');
-const requireAuth = require('../middleware/auth');
-const { getCategories, createCategory, updateBudget, getBudgetSummary } = require('../controllers/categoryController');
+import { Router } from 'express';
+import { requireAuth } from '../middleware/auth.js';
 
-const router = express.Router();
+const router = Router();
 router.use(requireAuth);
-router.get('/categories', getCategories);
-router.post('/categories', createCategory);
-router.patch('/categories/:id/budget', updateBudget);
-router.get('/summary', getBudgetSummary);
-
-module.exports = router;
+router.get('/', (req, res) => res.json([]));
+export default router;

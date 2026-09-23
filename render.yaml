@@ -1,31 +1,35 @@
+databases:
+  - name: ledgerly-db
+    plan: free
+    databaseName: finance_dashboard
+    user: ledgerly
+
 services:
   - type: web
-    name: finance-dashboard-api
+    name: ledgerly-api
     runtime: node
     rootDir: backend
+    plan: free
     buildCommand: npm install
     startCommand: node server.js
-    healthCheckPath: /api/health
-    autoDeploy: true
     envVars:
       - key: NODE_ENV
         value: production
-      - key: DATABASE_URL
-        sync: false
       - key: JWT_SECRET
         generateValue: true
-      - key: FRONTEND_URL
-        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ledgerly-db
+          property: connectionString
+      - key: CLIENT_URL
+        value: https://YOUR-VERCEL-PROJECT.vercel.app
 
   - type: static
-    name: finance-dashboard-web
+    name: ledgerly-frontend
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+    pullRequestPreviewsEnabled: false
     envVars:
       - key: VITE_API_URL
-        value: https://finance-dashboard-api.onrender.com/api
+        value: https://ledgerly-api.onrender.com/api
