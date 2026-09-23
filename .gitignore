@@ -1,0 +1,8 @@
+frontend/finance-dashboard/
+
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules/
+**/dist/
+.vercel/

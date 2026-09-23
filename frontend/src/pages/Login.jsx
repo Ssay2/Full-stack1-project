@@ -1,0 +1,10 @@
+import { useState } from 'react';
+import { api } from '../api/client';
+import { useAuth } from '../context/AuthContext';
+
+export default function Login({ onSignup }) { const { saveSession } = useAuth(); const [email, setEmail] = useState(''); const [password, setPassword] = useState(''); const [error, setError] = useState('');
+  async function submit(event) { event.preventDefault(); try { saveSession(await api.login({ email, password })); } catch (requestError) { setError(requestError.message); } }
+  return <AuthPage title="Welcome back" subtitle="A clearer view of your money starts here." onSubmit={submit} error={error} fields={<><label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required placeholder="you@example.com" /></label><label>Password<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required placeholder="8+ characters" /></label></>} button="Sign in"><p className="switch-copy">New to Ledgerly? <button type="button" onClick={onSignup}>Create an account</button></p></AuthPage>;
+}
+
+export function AuthPage({ title, subtitle, onSubmit, error, fields, button, children }) { return <div className="auth-layout"><div className="auth-art"><div className="brand"><span className="brand-mark">L</span><span>ledgerly</span></div><div className="art-copy"><span className="eyebrow">Money, in focus.</span><h1>Make room for what matters.</h1><p>See the shape of your spending, understand your habits, and make decisions with less noise.</p></div><span className="art-caption">Your financial picture, beautifully simple.</span></div><div className="auth-form"><div className="auth-form-inner"><span className="eyebrow">Your private dashboard</span><h2>{title}</h2><p className="auth-subtitle">{subtitle}</p><form onSubmit={onSubmit}>{fields}{error && <div className="form-error">{error}</div>}<button className="button button-primary" type="submit">{button}</button></form>{children}</div></div></div>; }
