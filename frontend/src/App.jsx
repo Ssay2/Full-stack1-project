@@ -1,19 +1,8 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { useState } from 'react';
+import { useAuth } from './context/AuthContext';
+import Dashboard from './components/Dashboard/Dashboard';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import Dashboard from './pages/Dashboard';
-import './App.css';
+import './styles.css';
 
-function ProtectedRoute({ children }) {
-  return localStorage.getItem('token') ? children : <Navigate to="/login" replace />;
-}
-
-export default function App() {
-  return <AuthProvider><BrowserRouter><Routes>
-    <Route path="/login" element={<Login />} />
-    <Route path="/signup" element={<Signup />} />
-    <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-    <Route path="*" element={<Navigate to="/dashboard" replace />} />
-  </Routes></BrowserRouter></AuthProvider>;
-}
+export default function App() { const { isAuthenticated } = useAuth(); const [page, setPage] = useState('login'); if (isAuthenticated) return <Dashboard />; return page === 'login' ? <Login onSignup={() => setPage('signup')} /> : <Signup onLogin={() => setPage('login')} />; }

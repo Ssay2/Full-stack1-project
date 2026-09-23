@@ -1,11 +1,12 @@
 import { createContext, useContext, useState } from 'react';
-import client from '../api/client';
 
 const AuthContext = createContext(null);
+
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null); const [loading, setLoading] = useState(false); const [error, setError] = useState(null);
-  async function authenticate(path, credentials) { setLoading(true); setError(null); try { const { data } = await client.post(path, credentials); localStorage.setItem('token', data.token); setUser(data.user); return true; } catch (requestError) { setError(requestError.response?.data?.error || 'Request failed'); return false; } finally { setLoading(false); } }
-  function logout() { localStorage.removeItem('token'); setUser(null); }
-  return <AuthContext.Provider value={{ user, loading, error, signup: (name, email, password) => authenticate('/auth/signup', { name, email, password }), login: (email, password) => authenticate('/auth/login', { email, password }), demo: () => authenticate('/auth/demo', {}), logout }}>{children}</AuthContext.Provider>;
+  const [session, setSession] = useState(() => JSON.parse(localStorage.getItem('ledgerly_session') || 'null'));
+  function saveSession(next) { localStorage.setItem('ledgerly_session', JSON.stringify(next)); setSession(next); }
+  function logout() { localStorage.removeItem('ledgerly_session'); setSession(null); }
+  return <AuthContext.Provider value={{ ...session, isAuthenticated: Boolean(session), saveSession, logout }}>{children}</AuthContext.Provider>;
 }
+
 export const useAuth = () => useContext(AuthContext);
